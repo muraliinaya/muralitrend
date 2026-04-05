@@ -1,41 +1,40 @@
 pipeline {
+
     agent any
 
-    environment {
-        PATH = "/opt/maven/bin:$PATH"
+    tools {
+        maven 'Maven'
     }
 
     stages {
 
-        stage("build") {
+        stage('Build') {
             steps {
-                echo "----------- build started ----------"
-                sh 'mvn clean deploy -Dmaven.test.skip=true'
-                echo "----------- build completed ----------"
+                echo "Build Started"
+                sh 'mvn clean install -DskipTests'
             }
         }
 
-        stage("test") {
+        stage('Test') {
             steps {
-                echo "----------- unit test started ----------"
-                sh 'mvn surefire-report:report'
-                echo "----------- unit test completed ----------"
+                echo "Running Tests"
+                sh 'mvn test'
             }
         }
 
-        stage('SonarQube analysis') {
-            environment {
-                scannerHome = tool 'sonarqubescanner'
-            }
-
+        stage('SonarCloud Analysis') {
             steps {
-                withSonarQubeEnv('sonarqubeserver') {
-                    sh "${scannerHome}/bin/sonar-scanner"
+                withSonarQubeEnv('sonarcloud') {
+
+                    sh '''
+                    mvn sonar:sonar \
+                    -Dsonar.projectKey=muraliinaya_muralitrend \
+                    -Dsonar.organization=muraliinaya \
+                    -Dsonar.host.url=https://sonarcloud.io \
+                    -Dsonar.login=$SONAR_AUTH_TOKEN
+                    '''
                 }
             }
         }
-
-        
-
     }
 }
