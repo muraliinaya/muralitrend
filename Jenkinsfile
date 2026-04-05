@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -10,33 +9,21 @@ pipeline {
 
         stage("build") {
             steps {
-
                 echo "----------- build started ----------"
-                sh 'mvn clean deploy -Dmaven.test.skip=true'
+                sh 'mvn clean install'
                 echo "----------- build completed ----------"
             }
         }
 
-        stage("test") {
+        stage('SonarQube analysis') {
             steps {
-                echo "----------- unit test started ----------"
-                sh 'mvn test'
-                echo "----------- unit test completed ----------"
-            }
-        }
-
-       stage('SonarQube analysis') {
-            environment {
-                scannerHome = tool 'sonarqubescanner'
-            }
-
-            steps {
-                withSonarQubeEnv('sonarqubeserver') {
-                    sh "${scannerHome}/bin/sonar-scanner"
+                echo "----------- sonar started ----------"
+                withSonarQubeEnv('sonarqube-server') {
+                    sh 'mvn sonar:sonar'
                 }
+                echo "----------- sonar completed ----------"
             }
         }
 
-      }
-
-  }  
+    }
+}
