@@ -10,8 +10,16 @@ pipeline {
         stage("build") {
             steps {
                 echo "----------- build started ----------"
-                sh 'mvn clean install -DskipTests'
+                sh 'mvn clean deploy -Dmaven.test.skip=true'
                 echo "----------- build completed ----------"
+            }
+        }
+
+        stage("test") {
+            steps {
+                echo "----------- unit test started ----------"
+                sh 'mvn surefire-report:report'
+                echo "----------- unit test completed ----------"
             }
         }
 
@@ -22,7 +30,7 @@ pipeline {
 
             steps {
                 withSonarQubeEnv('sonarqubeserver') {
-                    sh 'mvn sonar:sonar'
+                    sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
         }
