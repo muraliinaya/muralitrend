@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'
+        maven '/opt/maven/bin:$PATH"'
     }
 
     stages {
