@@ -39,7 +39,7 @@ pipeline {                                    // 1  // Defines the start of the 
             steps {                           // 10  // Defines the steps that will be executed in this stage
                 withSonarQubeEnv('sonarqubeserver') {
                                               // Executes the SonarQube analysis within the SonarQube environment
-                    sh "${scannerHome}/bin/sonar-scanner"  
+                    sh "${scannerHome}/bin/sonarscanner"  
                                               // Runs the SonarQube scanner tool
                 }                             // Ends the withSonarQubeEnv block
             }                                 // 10  // Ends the steps block for 'SonarQube analysis' stage
